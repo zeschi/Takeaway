@@ -11,7 +11,7 @@ import com.zes.xiaoxuntakeaway.R;
 public class EditAddressActivity extends BaseActivity {
     @Override
     protected int getContentViewId() {
-        return R.layout.fragment_mine;
+        return R.layout.fragment_edit_address;
     }
 
     /**

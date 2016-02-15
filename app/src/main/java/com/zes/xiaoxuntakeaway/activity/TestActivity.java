@@ -69,8 +69,6 @@ public class TestActivity extends Activity {
 
             }
         });
-//        left_listView.setAdapter(new ArrayAdapter<String>(this,
-//                android.R.layout.simple_expandable_list_item_1, leftStr));
 
         left_listView.setOnItemClickListener(new OnItemClickListener() {
 
