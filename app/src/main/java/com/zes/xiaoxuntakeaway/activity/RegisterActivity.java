@@ -2,11 +2,13 @@ package com.zes.xiaoxuntakeaway.activity;
 
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
 import com.zes.bundle.activity.BaseActivity;
+import com.zes.bundle.utils.MKLog;
 import com.zes.bundle.view.ClearEditText;
 import com.zes.xiaoxuntakeaway.R;
 import com.zes.xiaoxuntakeaway.bean.ResultDataInfo;
@@ -85,6 +87,38 @@ public class RegisterActivity extends BaseActivity {
      */
     private void onRegisterEvent() {
 
+        if (TextUtils.isEmpty(getEditTextString(etRegisterAccount))) {
+            showToast("请输入用户名");
+            return;
+        }
+        if (TextUtils.isEmpty(getEditTextString(etRegisterPassword))) {
+            showToast("请输入密码");
+            return;
+        }
+        if (TextUtils.isEmpty(getEditTextString(etRegisterVerificationCode))) {
+            showToast("请输入验证码");
+            return;
+        }
+        UserController.register(getEditTextString(etRegisterAccount), getEditTextString(etRegisterPassword), new ResultDataStringCallBack() {
+            @Override
+            public void onError(Call call, Exception e) {
+                MKLog.e(e.toString());
+            }
+
+            @Override
+            public void onResponse(ResultDataInfo<String> response) {
+
+                if (response == null) {
+                    showToast("未知错误");
+                } else if (response.getCode() == Const.CODE_REGISTER_REGISTER_SUCCESS) {
+                    showToast(response.getRetmsg());
+                    redictToActivity(RegisterActivity.this, MainActivity.class);
+                } else {
+                    showToast(response.getRetmsg());
+                }
+
+            }
+        });
 
     }
 

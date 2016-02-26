@@ -12,10 +12,14 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewConfiguration;
 import android.view.Window;
+import android.widget.Toast;
 
+import com.snappydb.SnappydbException;
 import com.zes.bundle.fragment.BaseFragment;
+import com.zes.bundle.utils.MKLog;
 import com.zes.bundle.view.ChangeColorIconWithTextView;
 import com.zes.xiaoxuntakeaway.R;
+import com.zes.xiaoxuntakeaway.database.DbHelper;
 import com.zes.xiaoxuntakeaway.fragment.MainFragment;
 import com.zes.xiaoxuntakeaway.fragment.MineFragment;
 import com.zes.xiaoxuntakeaway.fragment.OrderFragment;
@@ -41,6 +45,7 @@ public class MainActivity extends FragmentActivity implements
 
     private List<ChangeColorIconWithTextView> mTabIndicator = new ArrayList<ChangeColorIconWithTextView>();
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +59,13 @@ public class MainActivity extends FragmentActivity implements
 
         mViewPager.setAdapter(mAdapter);
         mViewPager.setOnPageChangeListener(this);
+        try {
+            MKLog.e("account" + DbHelper.getSnappyDb().get("account"));
+            MKLog.e("password" + DbHelper.getSnappyDb().get("password"));
+
+        } catch (SnappydbException e) {
+            e.printStackTrace();
+        }
     }
 
     private void initDatas() {
@@ -194,4 +206,23 @@ public class MainActivity extends FragmentActivity implements
         }
     }
 
+    private static long firstTime;
+
+    /**
+     * 连续按两次返回键就退出
+     */
+    @Override
+    public void onBackPressed() {
+
+        // TODO Auto-generated method stub
+        if (firstTime + 2000 > System.currentTimeMillis()) {
+            //  MyApplication.getInstance().exit();
+
+            super.onBackPressed();
+        } else {
+            Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT);
+        }
+        firstTime = System.currentTimeMillis();
+
+    }
 }

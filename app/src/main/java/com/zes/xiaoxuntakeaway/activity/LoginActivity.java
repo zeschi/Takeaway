@@ -7,13 +7,18 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.snappydb.DB;
+import com.snappydb.SnappydbException;
 import com.zes.bundle.activity.BaseActivity;
 import com.zes.bundle.utils.MKLog;
 import com.zes.bundle.view.ClearEditText;
 import com.zes.xiaoxuntakeaway.R;
-import com.zes.xiaoxuntakeaway.bean.ResultDataStringCallBack;
 import com.zes.xiaoxuntakeaway.bean.ResultDataInfo;
+import com.zes.xiaoxuntakeaway.bean.User;
+import com.zes.xiaoxuntakeaway.bean.UserCallback;
+import com.zes.xiaoxuntakeaway.constant.Const;
 import com.zes.xiaoxuntakeaway.controller.UserController;
+import com.zes.xiaoxuntakeaway.database.DbHelper;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -36,6 +41,7 @@ public class LoginActivity extends BaseActivity {
     @Bind(R.id.et_login_pwd)
     ClearEditText etLoginPwd;
 
+    private DB mSnappyDb;
 
     private Intent mRegisterIntent;
 
@@ -53,6 +59,9 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void initData(Bundle savedInstanceState) {
         mRegisterIntent = new Intent(this, RegisterActivity.class);
+
+
+        mSnappyDb = DbHelper.getSnappyDb();
 
 
     }
@@ -86,15 +95,36 @@ public class LoginActivity extends BaseActivity {
      * 登录事件
      */
     private void onLoginEvent() {
-        UserController.login(getEditTextString(etLoginUserAccount), getEditTextString(etLoginPwd), new ResultDataStringCallBack() {
+        UserController.login(getEditTextString(etLoginUserAccount), getEditTextString(etLoginPwd), new UserCallback() {
             @Override
             public void onError(Call call, Exception e) {
+
             }
 
             @Override
-            public void onResponse(ResultDataInfo<String> response) {
-                MKLog.e(response.getRetmsg());
-                showToast(response.getRetmsg());
+            public void onResponse(ResultDataInfo<User> response) {
+                if (response == null) {
+                    showToast("未知错误");
+                    return;
+                }
+                if (response.getCode() == Const.CODE_LOGIN_LOGIN_SUCCESS) {
+                    showToast(response.getRetmsg());
+                    //保存登录账号信息
+                    if (mSnappyDb != null) {
+                        try {
+                            mSnappyDb.put("account", getEditTextString(etLoginUserAccount));
+                            mSnappyDb.put("password", getEditTextString(etLoginPwd));
+                            MKLog.e("userInfo", response.getData().getUser_account());
+                            mSnappyDb.put("userInfo", response.getData());
+                        } catch (SnappydbException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    finish();
+//                    redictToActivity(LoginActivity.this, MainActivity.class);
+                } else {
+                    showToast(response.getRetmsg());
+                }
             }
         });
     }

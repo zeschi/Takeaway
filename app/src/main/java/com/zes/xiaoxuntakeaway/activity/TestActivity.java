@@ -4,43 +4,127 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AbsListView;
-import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.zes.bundle.adapter.MKBaseAdapter;
 import com.zes.bundle.bean.ViewHolder;
+import com.zes.bundle.utils.MKLog;
 import com.zes.bundle.view.PinnedHeaderListView;
 import com.zes.xiaoxuntakeaway.R;
 import com.zes.xiaoxuntakeaway.adapter.TestSectionedAdapter;
+import com.zes.xiaoxuntakeaway.bean.MenuCallback;
+import com.zes.xiaoxuntakeaway.bean.MenuType;
+import com.zes.xiaoxuntakeaway.bean.MenuTypeCallback;
+import com.zes.xiaoxuntakeaway.bean.ResultDataInfo;
+import com.zes.xiaoxuntakeaway.controller.MenuController;
+import com.zes.xiaoxuntakeaway.controller.MenuTypeController;
+import com.zes.xiaoxuntakeaway.fragment.MainFragment;
 
 import java.util.Arrays;
+import java.util.List;
+
+import okhttp3.Call;
 
 
 public class TestActivity extends Activity {
 
     private boolean isScroll = true;
 
+
+    private List<com.zes.xiaoxuntakeaway.bean.Menu> menuList;
+    private List<MenuType> menuTypeList;
+
+
     private ListView left_listView;
 
-    private String[] leftStr = new String[]{"星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"};
-    private String[][] rightStr = new String[][]{
-            {"星期一  早餐", "星期一  午餐", "星期一  晚餐"}, {"星期二  早餐", "星期二  午餐", "星期二  晚餐"},
-            {"星期三  早餐", "星期三  午餐", "星期三  晚餐"}, {"星期四  早餐", "星期四  午餐", "星期四  晚餐"},
-            {"星期五  早餐", "星期五  午餐", "星期五  晚餐"}, {"星期六  早餐", "星期六  午餐", "星期六  晚餐"},
-            {"星期日  早餐", "星期日  午餐", "星期日  晚餐"}};
+    private String[] leftStr;
+    private com.zes.xiaoxuntakeaway.bean.Menu[][] rightStr;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.test_activity);
+        setContentView(R.layout.fragment_menu);
+
+        if (!TextUtils.isEmpty(getIntent().getStringExtra(MainFragment.MERCHANT_ID))) {
+            final String merchantId = getIntent().getStringExtra(MainFragment.MERCHANT_ID);
+            MenuController.getMenuListByMerchantId(merchantId, new MenuCallback() {
+                        @Override
+                        public void onError(Call call, Exception e) {
+
+                        }
+
+                        @Override
+                        public void onResponse(ResultDataInfo<List<com.zes.xiaoxuntakeaway.bean.Menu>> response) {
+                            if (response == null || response.getData() == null)
+                                return;
+                            MKLog.e("menu" + response.getData().toString());
+                            menuList = response.getData();
+                            MenuTypeController.getMenuTypeListByMerchantId(merchantId, new MenuTypeCallback() {
+                                        @Override
+                                        public void onError(Call call, Exception e) {
+
+                                        }
+
+                                        @Override
+                                        public void onResponse(ResultDataInfo<List<MenuType>> response) {
+                                            if (response == null || response.getData() == null)
+                                                return;
+                                            MKLog.e("menuType" + response.getData().toString());
+                                            menuTypeList = response.getData();
+
+                                            leftStr = new String[menuTypeList.size()];
+                                            rightStr = new com.zes.xiaoxuntakeaway.bean.Menu[menuTypeList.size()][];
+                                            int count = 0;
+                                            int lastPos = 0;
+                                            for (int i = 0; i < menuTypeList.size(); i++) {
+                                                leftStr[i] = menuTypeList.get(i).getMenu_type_name();
+                                                for (int j = lastPos; j < menuList.size(); j++) {
+                                                    if (menuTypeList.get(i).getMenu_type_id().equals(menuList.get(j).getMenu_type_id())) {
+                                                        count++;
+                                                    }
+                                                }
+                                                rightStr[i] = new com.zes.xiaoxuntakeaway.bean.Menu[count];
+                                                MKLog.e("count" + count);
+                                                lastPos += count;
+                                                count = 0;
+                                            }
+                                            int pos = 0;
+                                            for (int i = 0; i < menuTypeList.size(); i++)
+                                                for (int j = 0; j < rightStr[i].length; j++) {
+                                                    for (int k = pos; k < menuList.size(); k++)
+                                                        if (menuTypeList.get(i).getMenu_type_id().equals(menuList.get(k).getMenu_type_id())) {
+                                                            rightStr[i][j] = menuList.get(k);
+                                                            pos++;
+                                                            break;
+                                                        }
+                                                }
+
+                                            initView();
+                                        }
+                                    }
+
+                            );
+                        }
+                    }
+
+            );
+
+
+        }
+
+
+    }
+
+    private void initView() {
         final PinnedHeaderListView right_listview = (PinnedHeaderListView) findViewById(R.id.pinnedListView);
         LayoutInflater inflator = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         LinearLayout header1 = (LinearLayout) inflator.inflate(R.layout.list_item, null);
@@ -65,12 +149,13 @@ public class TestActivity extends Activity {
              */
             @Override
             public void convert(ViewHolder holder, String data) {
+                holder.setText(R.id.tv_item_left_menu_type, data);
                 holder.setCircleImageByUrl(R.id.iv_item_left_merchant_type, "http://pic25.nipic.com/20121206/6789926_185118320000_2.jpg", R.drawable.pictures_no);
 
             }
         });
 
-        left_listView.setOnItemClickListener(new OnItemClickListener() {
+        left_listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> arg0, View view, int position,
@@ -95,7 +180,7 @@ public class TestActivity extends Activity {
 
         });
 
-        right_listview.setOnScrollListener(new OnScrollListener() {
+        right_listview.setOnScrollListener(new AbsListView.OnScrollListener() {
 
             @Override
             public void onScrollStateChanged(AbsListView arg0, int arg1) {
@@ -122,7 +207,6 @@ public class TestActivity extends Activity {
                 }
             }
         });
-
     }
 
     @Override

@@ -17,12 +17,26 @@ public class Const {
 
     public static String URL_GET_VERIFICATION_CODE = URL_BASE + "user/getVerificationCode";
 
+    public static String URL_GET_MERCHANT_LIST = URL_BASE + "merchant/getMerchantList";
+
+    public static String URL_GET_MENU_LIST = URL_BASE + "menu/getMenuByMerchantId";
+
+    public static String URL_GET_MENU_TYPE_LIST = URL_BASE + "menuType/getMenuTypeByMerchantId";
+
+    public static String URL_GET_MERCHANT_INFO = URL_BASE + "merchant/getMerchantById";
+
+    public static String URL_CREATE_ORDER = URL_BASE + "order/createOrder";
+
     /**
      * 获得验证码成功
      */
     public static int CODE_REGISTER_VERIFICATION_CODE_SUCCESS = 1;
-
-    public static int CODE_REGISTER_VERIFICATION_CODE_FAIL = 0;
-
-
+    /**
+     * 　注册成功
+     */
+    public static int CODE_REGISTER_REGISTER_SUCCESS = 1;
+    /**
+     * 登录成功
+     */
+    public static int CODE_LOGIN_LOGIN_SUCCESS = 1;
 }

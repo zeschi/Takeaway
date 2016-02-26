@@ -1,6 +1,7 @@
 package com.zes.xiaoxuntakeaway.adapter;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,15 +13,18 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.zes.bundle.view.SectionedBaseAdapter;
 import com.zes.xiaoxuntakeaway.R;
+import com.zes.xiaoxuntakeaway.bean.Menu;
 
 
 public class TestSectionedAdapter extends SectionedBaseAdapter {
 
     private Context mContext;
     private String[] leftStr;
-    private String[][] rightStr;
+    private Menu[][] rightStr;
+    private HolderClickListener mHolderClickListener;
+    private ViewHolder holder;
 
-    public TestSectionedAdapter(Context context, String[] leftStr, String[][] rightStr) {
+    public TestSectionedAdapter(Context context, String[] leftStr, Menu[][] rightStr) {
         this.mContext = context;
         this.leftStr = leftStr;
         this.rightStr = rightStr;
@@ -49,17 +53,41 @@ public class TestSectionedAdapter extends SectionedBaseAdapter {
     @Override
     public View getItemView(final int section, final int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder = null;
+        holder = null;
         if (convertView == null) {
             viewHolder = new ViewHolder();
             LayoutInflater inflater = (LayoutInflater) parent.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.item_right_merchant, null);
             viewHolder.imageView = (ImageView) convertView.findViewById(R.id.iv_item_right_merchant_order);
+            viewHolder.menuSalePriceTv = (TextView) convertView.findViewById(R.id.tv_item_right_merchant_order_price);
+            viewHolder.menuGoodLikeTv = (TextView) convertView.findViewById(R.id.tv_item_right_menu_good_like);
+            viewHolder.menuMouthSaleTv = (TextView) convertView.findViewById(R.id.tv_item_right_menu_month_sale);
+            viewHolder.menuNameTv = (TextView) convertView.findViewById(R.id.tv_item_right_menu_name);
+            viewHolder.menuAddIv = (ImageView) convertView.findViewById(R.id.iv_item_right_merchant_add);
+            viewHolder.menuDelIv = (ImageView) convertView.findViewById(R.id.iv_item_right_merchant_del);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
         if (viewHolder != null) {
-            Glide.with(mContext).load("http://pic25.nipic.com/20121206/6789926_185118320000_2.jpg").placeholder(R.drawable.pictures_no).into(viewHolder.imageView);
+            holder = viewHolder;
+            viewHolder.menuNameTv.setText(rightStr[section][position].getMenu_name());
+            viewHolder.menuMouthSaleTv.setText("月售" + rightStr[section][position].getMenu_mouth_sale());
+            viewHolder.menuGoodLikeTv.setText("好评" + rightStr[section][position].getMenu_good_like());
+            viewHolder.menuSalePriceTv.setText("￥" + rightStr[section][position].getMenu_sale_price());
+            viewHolder.menuAddIv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mHolderClickListener != null) {
+                        int[] start_location = new int[2];
+                        holder.menuAddIv.getLocationInWindow(start_location);//获取点击商品图片的位置
+                        Drawable drawable = holder.menuAddIv.getDrawable();//复制一个新的商品图标
+                        mHolderClickListener.onHolderClick(drawable, start_location, section, position);
+                    }
+                    //   Toast.makeText(MyApplication.getAppContext(), "sss", Toast.LENGTH_SHORT).show();
+                }
+            });
+            Glide.with(mContext).load(rightStr[section][position].getMenu_portrait()).placeholder(R.drawable.pictures_no).into(viewHolder.imageView);
         }
         return convertView;
     }
@@ -80,7 +108,21 @@ public class TestSectionedAdapter extends SectionedBaseAdapter {
 
     private class ViewHolder {
         ImageView imageView;
+        TextView menuNameTv;
+        TextView menuMouthSaleTv;
+        TextView menuGoodLikeTv;
+        ImageView menuAddIv;
+        ImageView menuDelIv;
+        TextView menuSalePriceTv;
         RelativeLayout layout;
 
+    }
+
+    public void setOnSetHolderClickListener(HolderClickListener holderClickListener) {
+        this.mHolderClickListener = holderClickListener;
+    }
+
+    public interface HolderClickListener {
+        void onHolderClick(Drawable drawable, int[] start_location, int section, int position);
     }
 }

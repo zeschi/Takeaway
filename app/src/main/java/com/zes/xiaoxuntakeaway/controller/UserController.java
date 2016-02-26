@@ -1,6 +1,7 @@
 package com.zes.xiaoxuntakeaway.controller;
 
 import com.zes.xiaoxuntakeaway.bean.ResultDataStringCallBack;
+import com.zes.xiaoxuntakeaway.bean.UserCallback;
 import com.zes.xiaoxuntakeaway.constant.Const;
 import com.zhy.http.okhttp.OkHttpUtils;
 
@@ -17,12 +18,12 @@ public class UserController {
      * @param pwd
      * @param callback
      */
-    public static void login(String account, String pwd, ResultDataStringCallBack callback) {
+    public static void login(String account, String pwd, UserCallback callback) {
         OkHttpUtils
                 .post()
                 .url(Const.URL_LOGIN)
                 .addParams("account", account)
-                .addParams("password", pwd)
+                .addParams("pwd", pwd)
                 .build()
                 .execute(callback);
 
@@ -40,7 +41,7 @@ public class UserController {
                 .post()
                 .url(Const.URL_REGISTER)
                 .addParams("account", account)
-                .addParams("password", pwd)
+                .addParams("pwd", pwd)
                 .build()
                 .execute(callback);
     }
