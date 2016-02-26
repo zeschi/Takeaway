@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/iv_item_right_merchant_order"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:layout_margin="16dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_haozhuyi" />
+
+    <TextView
+        android:id="@+id/tv_item_right_menu_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:layout_toRightOf="@id/iv_item_right_merchant_order"
+        android:text="筒骨瘦肉饭"
+        android:textColor="@color/black"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/tv_item_right_menu_month_sale"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_item_right_menu_name"
+        android:layout_marginTop="5dp"
+        android:layout_toRightOf="@id/iv_item_right_merchant_order"
+        android:text="月售999份"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/tv_item_right_menu_good_like"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_item_right_menu_name"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_toRightOf="@id/tv_item_right_menu_month_sale"
+        android:text="好评888"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/tv_item_right_merchant_order_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_item_right_menu_month_sale"
+        android:layout_marginTop="3dp"
+        android:layout_toRightOf="@id/iv_item_right_merchant_order"
+        android:text="￥12"
+        android:textColor="@color/red"
+        android:textSize="16sp" />
+
+    <ImageView
+        android:id="@+id/iv_item_right_merchant_del"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignBaseline="@id/tv_item_right_menu_month_sale"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="50dp"
+        android:src="@drawable/ic_del_menu" />
+
+
+    <ImageView
+        android:id="@+id/iv_item_right_merchant_add"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignBaseline="@id/tv_item_right_menu_month_sale"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="3dp"
+        android:src="@drawable/ic_add_menu" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="36dp"
+        android:layout_marginTop="57dp"
+        android:layout_toLeftOf="@+id/tv_item_right_merchant_order_price"
+        android:text="1"
+        android:textSize="16sp" />
+
+</RelativeLayout>
