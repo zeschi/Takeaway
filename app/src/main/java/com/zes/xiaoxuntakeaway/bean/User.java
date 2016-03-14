@@ -1,9 +1,11 @@
 package com.zes.xiaoxuntakeaway.bean;
 
+import java.io.Serializable;
+
 /**
  * Created by zes on 16-2-16.
  */
-public class User {
+public class User implements Serializable {
 
 
     /**

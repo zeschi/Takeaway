@@ -27,6 +27,13 @@ public class Const {
 
     public static String URL_CREATE_ORDER = URL_BASE + "order/createOrder";
 
+    public static String URL_GET_ORDER_BY_USER_ID = URL_BASE + "order/getOrderByUserId";
+
+    public static String URL_SAVE_USER_ADDRESS=URL_BASE+"address/addAddress";
+
+    public static String URL_CAHNGE_USER_ADDRESS=URL_BASE+"address/changeAddress";
+
+    public static String URL_DELETE_USER_ADDRESS=URL_BASE+"address/deleteAddress";
     /**
      * 获得验证码成功
      */

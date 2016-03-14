@@ -1,6 +1,7 @@
 package com.zes.xiaoxuntakeaway.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -23,25 +24,27 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.snappydb.DB;
+import com.snappydb.SnappydbException;
 import com.zes.bundle.adapter.MKBaseAdapter;
 import com.zes.bundle.bean.ViewHolder;
 import com.zes.bundle.fragment.BaseFragment;
 import com.zes.bundle.utils.MKLog;
 import com.zes.bundle.view.PinnedHeaderListView;
 import com.zes.xiaoxuntakeaway.R;
+import com.zes.xiaoxuntakeaway.activity.ConfirmOrderActivity;
 import com.zes.xiaoxuntakeaway.adapter.TestSectionedAdapter;
 import com.zes.xiaoxuntakeaway.bean.Menu;
 import com.zes.xiaoxuntakeaway.bean.MenuCallback;
 import com.zes.xiaoxuntakeaway.bean.MenuType;
 import com.zes.xiaoxuntakeaway.bean.MenuTypeCallback;
 import com.zes.xiaoxuntakeaway.bean.ResultDataInfo;
-import com.zes.xiaoxuntakeaway.bean.ResultDataStringCallBack;
+import com.zes.xiaoxuntakeaway.bean.User;
 import com.zes.xiaoxuntakeaway.controller.MenuController;
 import com.zes.xiaoxuntakeaway.controller.MenuTypeController;
-import com.zes.xiaoxuntakeaway.controller.OrderController;
+import com.zes.xiaoxuntakeaway.database.DbHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -76,6 +79,13 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
     //是否完成清理
     private boolean isClean = false;
     private FrameLayout animation_viewGroup;
+    private Intent mIntent;
+    private DB mSnappyDb;
+    private User mUser;
+    public static String MERCHANT_ID = "merchantId";
+    public static String MERCHANT_LIST_DATA = "menuDataList";
+    private String merchantId;
+
     private Handler myHandler = new Handler() {
         public void handleMessage(Message msg) {
             switch (msg.what) {
@@ -242,6 +252,14 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_menu, container, false);
+        mSnappyDb = DbHelper.getSnappyDb();
+        try {
+            mUser = mSnappyDb.get("userInfo", User.class);
+        } catch (SnappydbException e) {
+            e.printStackTrace();
+        }
+
+        mIntent = new Intent(getActivity(), ConfirmOrderActivity.class);
         ivMenuCar = (ImageView) rootView.findViewById(R.id.iv_menu_car);
         startPriceTv = (TextView) rootView.findViewById(R.id.tv_order_menu_start_price);
         if (!TextUtils.isEmpty(getArguments().getString(MainFragment.MERCHANT_START_PRICE))) {
@@ -250,7 +268,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
 
 
         if (!TextUtils.isEmpty(getArguments().getString(MainFragment.MERCHANT_ID))) {
-            final String merchantId = getArguments().getString(MainFragment.MERCHANT_ID);
+            merchantId = getArguments().getString(MainFragment.MERCHANT_ID);
             MenuController.getMenuListByMerchantId(merchantId, new MenuCallback() {
                         @Override
                         public void onError(Call call, Exception e) {
@@ -434,21 +452,18 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tv_order_menu_start_price:
-                MKLog.e(new Gson().toJson(menuDataList) + "json");
-                OrderController.createOrder("1", "1", new Gson().toJson(menuDataList), new ResultDataStringCallBack() {
-                    @Override
-                    public void onError(Call call, Exception e) {
+                mIntent.putExtra(MenuFragment.MERCHANT_ID, merchantId);
+                mIntent.putExtra(MenuFragment.MERCHANT_LIST_DATA, new Gson().toJson(menuDataList));
 
-                    }
+                startActivity(mIntent);
 
-                    @Override
-                    public void onResponse(ResultDataInfo<String> response) {
-                        Toast.makeText(getActivity(), response.getRetmsg() + "papappapa", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
+                //onGetOrderEvent();
                 break;
         }
 
     }
+
+
+
+
 }

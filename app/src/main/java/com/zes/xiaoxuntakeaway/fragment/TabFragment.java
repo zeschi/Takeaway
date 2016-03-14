@@ -37,8 +37,7 @@ public class TabFragment extends Fragment {
         mMerchantLv = (ListView) rootView.findViewById(R.id.lv_merchant_main);
 
 //        mAdapter = new MerchantAdapter(getActivity(), lists, R.layout.item_merchant);
-        mOrderAdapter = new OrderAdapter(getActivity(), lists, R.layout.item_order);
-        mMerchantLv.setAdapter(mOrderAdapter);
+    
 //        if (getArguments() != null) {
 //            mTitle = getArguments().getString("title");
 //        }

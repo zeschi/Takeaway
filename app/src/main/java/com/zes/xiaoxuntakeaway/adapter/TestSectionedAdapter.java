@@ -23,6 +23,7 @@ public class TestSectionedAdapter extends SectionedBaseAdapter {
     private Menu[][] rightStr;
     private HolderClickListener mHolderClickListener;
     private ViewHolder holder;
+    private int count = 0;
 
     public TestSectionedAdapter(Context context, String[] leftStr, Menu[][] rightStr) {
         this.mContext = context;
@@ -65,6 +66,7 @@ public class TestSectionedAdapter extends SectionedBaseAdapter {
             viewHolder.menuNameTv = (TextView) convertView.findViewById(R.id.tv_item_right_menu_name);
             viewHolder.menuAddIv = (ImageView) convertView.findViewById(R.id.iv_item_right_merchant_add);
             viewHolder.menuDelIv = (ImageView) convertView.findViewById(R.id.iv_item_right_merchant_del);
+            viewHolder.menuCountTv = (TextView) convertView.findViewById(R.id.tv_item_menu_count);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
@@ -75,16 +77,28 @@ public class TestSectionedAdapter extends SectionedBaseAdapter {
             viewHolder.menuMouthSaleTv.setText("月售" + rightStr[section][position].getMenu_mouth_sale());
             viewHolder.menuGoodLikeTv.setText("好评" + rightStr[section][position].getMenu_good_like());
             viewHolder.menuSalePriceTv.setText("￥" + rightStr[section][position].getMenu_sale_price());
+            final ViewHolder finalViewHolder = viewHolder;
             viewHolder.menuAddIv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    count = Integer.parseInt(finalViewHolder.menuCountTv.getText().toString()) + 1;
+                    finalViewHolder.menuCountTv.setText(count + "");
                     if (mHolderClickListener != null) {
                         int[] start_location = new int[2];
                         holder.menuAddIv.getLocationInWindow(start_location);//获取点击商品图片的位置
                         Drawable drawable = holder.menuAddIv.getDrawable();//复制一个新的商品图标
                         mHolderClickListener.onHolderClick(drawable, start_location, section, position);
                     }
-                    //   Toast.makeText(MyApplication.getAppContext(), "sss", Toast.LENGTH_SHORT).show();
+
+                }
+            });
+            viewHolder.menuDelIv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    count = Integer.parseInt(finalViewHolder.menuCountTv.getText().toString()) - 1;
+                    if (count < 0)
+                        count = 0;
+                    finalViewHolder.menuCountTv.setText(count + "");
                 }
             });
             Glide.with(mContext).load(rightStr[section][position].getMenu_portrait()).placeholder(R.drawable.pictures_no).into(viewHolder.imageView);
@@ -114,6 +128,7 @@ public class TestSectionedAdapter extends SectionedBaseAdapter {
         ImageView menuAddIv;
         ImageView menuDelIv;
         TextView menuSalePriceTv;
+        TextView menuCountTv;
         RelativeLayout layout;
 
     }
