@@ -1,8 +1,11 @@
 package com.zes.xiaoxuntakeaway.controller;
 
+import com.snappydb.SnappydbException;
 import com.zes.xiaoxuntakeaway.bean.ResultDataStringCallBack;
+import com.zes.xiaoxuntakeaway.bean.User;
 import com.zes.xiaoxuntakeaway.bean.UserCallback;
 import com.zes.xiaoxuntakeaway.constant.Const;
+import com.zes.xiaoxuntakeaway.database.DbHelper;
 import com.zhy.http.okhttp.OkHttpUtils;
 
 /**
@@ -10,6 +13,9 @@ import com.zhy.http.okhttp.OkHttpUtils;
  * Created by zes on 16-2-15.
  */
 public class UserController {
+
+
+    private User mUser;
 
     /**
      * 登录
@@ -59,5 +65,14 @@ public class UserController {
                 .execute(callback);
     }
 
+    public User getUserInfoFromLocal() {
+        try {
+            mUser = DbHelper.getSnappyDb().get("userInfo", User.class);
+        } catch (SnappydbException e) {
+            e.printStackTrace();
+        }
+        return mUser;
+
+    }
 
 }
