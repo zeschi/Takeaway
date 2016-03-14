@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import butterknife.ButterKnife;
@@ -21,9 +22,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         //requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(getContentViewId());
+
         ButterKnife.bind(this);
         initView();
         initData(savedInstanceState);
+
     }
 
 
@@ -84,5 +87,19 @@ public abstract class BaseActivity extends AppCompatActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
+
+    /**
+     * 获取EditText的输入 如果不是EditText类型，返回null
+     *
+     * @param view
+     * @return
+     */
+    public String getEditTextString(View view) {
+        if (view instanceof EditText) {
+            return ((EditText) view).getText().toString();
+        }
+        return null;
+    }
+
 
 }

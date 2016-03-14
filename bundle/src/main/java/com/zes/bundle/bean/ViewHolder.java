@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.zes.bundle.R;
+import com.zes.bundle.utils.GlideCircleTransform;
 
 
 /**
@@ -168,6 +169,7 @@ public class ViewHolder {
         return this;
     }
 //
+
     /**
      * ImageView设置为网络图片
      *
@@ -186,7 +188,26 @@ public class ViewHolder {
     public ViewHolder setImageByUrl(int viewId, String url, int placeholderResId, int errorResId) {
         ImageView iv = getView(viewId);
         Glide.with(mContext).load(url).placeholder(placeholderResId).error(errorResId).into(iv);
-       // ImageLoader.load(mContext, iv, url, placeholderResId, errorResId);
+        // ImageLoader.load(mContext, iv, url, placeholderResId, errorResId);
+        return this;
+    }
+
+    public ViewHolder setCircleImageByUrl(int viewId, String url, int placeholderResId) {
+        return setCircleImageByUrl(viewId, url, placeholderResId, 0);
+    }
+
+    /**
+     * 加载圆形图片
+     *
+     * @param viewId
+     * @param url
+     * @param placeholderResId
+     * @param errorResId
+     * @return
+     */
+    public ViewHolder setCircleImageByUrl(int viewId, String url, int placeholderResId, int errorResId) {
+        ImageView iv = getView(viewId);
+        Glide.with(mContext).load(url).transform(new GlideCircleTransform(mContext)).placeholder(placeholderResId).error(errorResId).into(iv);
         return this;
     }
 //    public ViewHolder setCropImageByUrl(int viewId, String url, int placeholderResId, int errorResId) {
