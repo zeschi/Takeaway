@@ -52,13 +52,18 @@ public class MainActivity extends FragmentActivity implements
         setContentView(R.layout.activity_main);
 
         setOverflowShowingAlways();
-//        getActionBar().setDisplayShowHomeEnabled(false);
         mViewPager = (ViewPager) findViewById(R.id.id_viewpager);
 
-        initDatas();
 
+        initDatas();
         mViewPager.setAdapter(mAdapter);
         mViewPager.setOnPageChangeListener(this);
+        if (getIntent().getBooleanExtra("order", false)) {
+            resetOtherTabs();
+
+            mTabIndicator.get(1).setIconAlpha(1.0f);
+            mViewPager.setCurrentItem(1, false);
+        }
         try {
             MKLog.e("account" + DbHelper.getSnappyDb().get("account"));
             MKLog.e("password" + DbHelper.getSnappyDb().get("password"));

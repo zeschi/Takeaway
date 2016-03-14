@@ -59,10 +59,7 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void initData(Bundle savedInstanceState) {
         mRegisterIntent = new Intent(this, RegisterActivity.class);
-
-
         mSnappyDb = DbHelper.getSnappyDb();
-
 
     }
 
